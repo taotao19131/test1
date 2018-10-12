@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.appsys.dao.AppCategoryDao">
+
+    <resultMap id="appCategoryResultMap" type="AppCategory">
+        <id property="id" column="id" javaType="Integer"/>
+        <result property="categoryCode" column="categoryCode" javaType="String"/>
+        <result property="categoryName" column="categoryName" javaType="String"/>
+        <result property="parentId" column="parentId" javaType="Integer"/>
+        <result property="createdBy" column="createdBy" javaType="Integer"/>
+        <result property="creationDate" column="creationDate" javaType="Date"/>
+        <result property="modifyBy" column="modifyBy" javaType="Integer"/>
+        <result property="modifyDate" column="modifyDate" javaType="Date"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="AppCategory">
+        insert app_category (categoryCode,categoryName,parentId,createdBy,creationDate)
+          values (#{categoryCode},#{categoryName},#{parentId},#{createdBy},#{creationDate})
+    </insert>
+
+    <delete id="delete" parameterType="Integer">
+        delete app_category where id = #{id}
+    </delete>
+
+    <update id="update" parameterType="AppCategory">
+        update app_category
+        <set>
+            <if test="categoryCode != null">categoryCode=#{categoryCode},</if>
+            <if test="categoryName != null">categoryName=#{categoryName},</if>
+            <if test="parentId != null">parentId=#{parentId},</if>
+            <if test="modifyBy != null">modifyBy=#{modifyBy},</if>
+            <if test="modifyDate != null">modifyDate=#{modifyDate},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="selectById" parameterType="Integer" resultMap="appCategoryResultMap">
+        select * from app_category where id=#{id}
+    </select>
+
+    <select id="selectByParentId" parameterType="Integer" resultMap="appCategoryResultMap">
+        select * from app_category where
+        <if test="parentId==null">
+            parentId is #{parentId}
+        </if>
+        <if test="parentId!=null">
+            parentId = #{parentId}
+        </if>
+    </select>
+
+    <select id="selectAll" resultMap="appCategoryResultMap">
+        select * from app_category
+    </select>
+</mapper>

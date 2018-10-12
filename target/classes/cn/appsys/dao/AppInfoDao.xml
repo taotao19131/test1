@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.appsys.dao.AppInfoDao">
+
+    <resultMap id="appInfoResultMap" type="AppInfo">
+        <id property="id" column="id" javaType="Integer"/>
+        <result property="softwareName" column="softwareName" javaType="String"/>
+        <result property="apkName" column="APKName" javaType="String"/>
+        <result property="supportROM" column="supportROM" javaType="String"/>
+        <result property="interfaceLanguage" column="interfaceLanguage" javaType="String"/>
+        <result property="softwareSize" column="softwareSize" javaType="Integer"/>
+        <result property="updateDate" column="updateDate" javaType="Date"/>
+        <result property="devId" column="devId" javaType="Integer"/>
+        <result property="appInfo" column="appInfo" javaType="String"/>
+        <result property="status" column="status" javaType="Integer"/>
+        <result property="onSaleDate" column="onSaleDate" javaType="Date"/>
+        <result property="offSaleDate" column="offSaleDate" javaType="Date"/>
+        <result property="flatformId" column="flatformId" javaType="Integer"/>
+        <result property="categoryLevel3" column="categoryLevel3" javaType="Integer"/>
+        <result property="createdBy" column="createdBy" javaType="Integer"/>
+        <result property="creationDate" column="creationDate" javaType="Date"/>
+        <result property="modifyBy" column="modifyBy" javaType="Integer"/>
+        <result property="modifyDate" column="modifyDate" javaType="Date"/>
+        <result property="categoryLevel1" column="categoryLevel1" javaType="Integer"/>
+        <result property="categoryLevel2" column="categoryLevel2" javaType="Integer"/>
+        <result property="logoPicPath" column="logoPicPath" javaType="String"/>
+        <result property="logoLocPath" column="logoLocPath" javaType="String"/>
+        <result property="versionId" column="versionId" javaType="Integer"/>
+
+        <result property="statusName" column="statusName" javaType="String"/>
+        <result property="flatformName" column="flatformName" javaType="String"/>
+        <result property="categoryLevel1Name" column="categoryLevel1Name" javaType="String"/>
+        <result property="categoryLevel2Name" column="categoryLevel2Name" javaType="String"/>
+        <result property="categoryLevel3Name" column="categoryLevel3Name" javaType="String"/>
+        <result property="versionName" column="versionNo" javaType="String"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="AppInfo">
+        insert app_info (softwareName,APKName,supportROM,interfaceLanguage,softwareSize,devId,appInfo,status,flatformId,categoryLevel3,downloads,createdBy,creationDate,categoryLevel1,categoryLevel2,logoPicPath,logoLocPath)
+          values (#{softwareName},#{apkName},#{supportROM},#{interfaceLanguage},#{softwareSize},#{devId},#{appInfo},#{status},#{flatformId},#{categoryLevel3},#{downloads},#{createdBy},#{creationDate},#{categoryLevel1},#{categoryLevel2},#{logoPicPath},#{logoLocPath})
+    </insert>
+
+    <delete id="delete" parameterType="Integer">
+        delete from app_info where id = #{id}
+    </delete>
+
+    <update id="update" parameterType="AppInfo">
+        update app_info
+        <set>
+            <if test="softwareName != null">softwareName=#{softwareName},</if>
+            <if test="apkName != null">APKName=#{apkName},</if>
+            <if test="supportROM != null">supportROM=#{supportROM},</if>
+            <if test="interfaceLanguage != null">interfaceLanguage=#{interfaceLanguage},</if>
+            <if test="softwareSize != null">softwareSize=#{softwareSize},</if>
+            <if test="devId != null">devId=#{devId},</if>
+            <if test="appInfo != null">appInfo=#{appInfo},</if>
+            <if test="status != null">status=#{status},</if>
+            <if test="flatformId != null">flatformId=#{flatformId},</if>
+            <if test="categoryLevel3 != null">categoryLevel3=#{categoryLevel3},</if>
+            <if test="downloads != null">downloads=#{downloads},</if>
+            <if test="categoryLevel1 != null">categoryLevel1=#{categoryLevel1},</if>
+            <if test="categoryLevel2 != null">categoryLevel2=#{categoryLevel2},</if>
+            <if test="logoPicPath != null">logoPicPath=#{logoPicPath},</if>
+            <if test="logoLocPath != null">logoLocPath=#{logoLocPath},</if>
+            <if test="modifyBy != null">modifyBy=#{modifyBy},</if>
+            <if test="modifyDate != null">modifyDate=#{modifyDate},</if>
+            <if test="versionId != null">versionId = #{versionId}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="selectById" resultMap="appInfoResultMap">
+        select
+          i.* , d.valueName as statusName,d2.`valueName` as flatformName,
+          c1.categoryName AS categorylevel1Name,c2.`categoryName`AS categorylevel2Name,
+          c3.`categoryName` AS categorylevel3Name,v.versionNo
+        from
+          (app_info AS i,data_dictionary AS d ,data_dictionary AS d2,
+          app_category AS c1,app_category AS c2,app_category AS c3)
+        left join app_version as v on i.id = v.appId and i.versionId = v.id
+        <where>
+            i.id = #{id}
+            AND d.`valueId`=i.`status`AND d.`typeCode` = 'APP_STATUS'
+            AND d2.`typeCode`='APP_FLATFORM'AND d2.`valueId`=i.`flatformId`
+            AND c1.`id`=i.`categoryLevel1` AND c2.`id`=i.`categoryLevel2`
+            AND c3.`id`=i.`categoryLevel3`
+        </where>
+    </select>
+
+    <select id="selectCountByTerms" resultType="Integer" parameterType="AppInfo">
+        select count(*) from app_info
+        <where>
+            <if test="softwareName != null">softwareName like concat('%',#{softwareName},'%')</if>
+            <if test="status != null">and status=#{status}</if>
+            <if test="flatformId != null">and flatformId=#{flatformId}</if>
+            <if test="categoryLevel1 != null">and categoryLevel1=#{categoryLevel1}</if>
+            <if test="categoryLevel2 != null">and categoryLevel2=#{categoryLevel2}</if>
+            <if test="categoryLevel3 != null">and categoryLevel3=#{categoryLevel3}</if>
+            <if test="createdBy != null">and createdBy=#{devId}</if>
+        </where>
+    </select>
+
+
+    <select id="selectByTerms" resultMap="appInfoResultMap">
+        select
+          i.* , d.valueName as statusName,d2.`valueName` as flatformName,
+          c1.categoryName AS categorylevel1Name,c2.`categoryName`AS categorylevel2Name,
+          c3.`categoryName` AS categorylevel3Name,v.versionNo
+        from
+          (app_info AS i,data_dictionary AS d ,data_dictionary AS d2,
+          app_category AS c1,app_category AS c2,app_category AS c3)
+        left join app_version as v on i.id = v.appId and i.versionId = v.id
+        <where>
+            <if test="appInfo.softwareName != null">i.softwareName like concat('%',#{appInfo.softwareName},'%')</if>
+            <if test="appInfo.status != null">and i.status=#{appInfo.status}</if>
+            <if test="appInfo.flatformId != null">and i.flatformId=#{appInfo.flatformId}</if>
+            <if test="appInfo.categoryLevel1 != null">and i.categoryLevel1=#{appInfo.categoryLevel1}</if>
+            <if test="appInfo.categoryLevel2 != null">and i.categoryLevel2=#{appInfo.categoryLevel2}</if>
+            <if test="appInfo.categoryLevel3 != null">and i.categoryLevel3=#{appInfo.categoryLevel3}</if>
+            <if test="appInfo.createdBy != null">and i.createdBy=#{appInfo.devId}</if>
+            AND d.`valueId`=i.`status`AND d.`typeCode` = 'APP_STATUS'
+            AND d2.`typeCode`='APP_FLATFORM'AND d2.`valueId`=i.`flatformId`
+            AND c1.`id`=i.`categoryLevel1` AND c2.`id`=i.`categoryLevel2`
+            AND c3.`id`=i.`categoryLevel3`
+            order by creationDate DESC limit #{from},#{pageSize}
+        </where>
+    </select>
+
+</mapper>

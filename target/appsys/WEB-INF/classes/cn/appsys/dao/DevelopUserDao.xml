@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.appsys.dao.DevelopUserDao">
+
+    <resultMap id="devUserResultMap" type="DevelopUser">
+        <id property="id" column="id" javaType="Integer"/>
+        <result property="devCode" column="devCode" javaType="String"/>
+        <result property="devName" column="devName" javaType="String"/>
+        <result property="devPassword" column="devPassword" javaType="String"/>
+        <result property="devEmail" column="devEmail" javaType="String"/>
+        <result property="devInfo" column="devInfo" javaType="String"/>
+        <result property="createdBy" column="createdBy" javaType="Integer"/>
+        <result property="creationDate" column="creationDate" javaType="Date"/>
+        <result property="modifyBy" column="modifyBy" javaType="Integer"/>
+        <result property="modifyDate" column="modifyDate" javaType="Date"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="DevelopUser">
+        insert dev_user (devCode,devName,devPassword,devEmail,createdBy,creationDate)
+          values (#{devCode},#{devName},#{devPassword},#{devEmail},#{createdBy},#{creationDate})
+    </insert>
+
+    <delete id="delete" parameterType="Integer">
+        delete dev_user where id = #{id}
+    </delete>
+
+    <update id="update" parameterType="DevelopUser">
+        update dev_user
+        <set>
+            <if test="devName != null">devName=#{devName},</if>
+            <if test="devPassword != null">devPassword=#{devPassword},</if>
+            <if test="devEmail != null">devEmail=#{devEmail},</if>
+            <if test="devInfo != null">devInfo=#{devInfo},</if>
+            <if test="modifyBy != null">modifyBy=#{modifyBy},</if>
+            <if test="modifyDate != null">modifyDate=#{modifyDate},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="selectById" parameterType="Integer" resultMap="devUserResultMap">
+        select * from dev_user where id=#{id}
+    </select>
+
+    <select id="selectByDevCode" parameterType="String" resultMap="devUserResultMap">
+        select * from dev_user where devCode=#{devCode}
+    </select>
+
+    <select id="selectAll" resultMap="devUserResultMap">
+        select * from dev_user
+    </select>
+</mapper>

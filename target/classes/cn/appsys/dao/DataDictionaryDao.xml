@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.appsys.dao.DataDictionaryDao">
+
+    <resultMap id="dataDictionaryResultMap" type="DataDictionary">
+        <id property="id" column="id" javaType="Integer"/>
+        <result property="typeCode" column="typeCode" javaType="String"/>
+        <result property="typeName" column="typeName" javaType="String"/>
+        <result property="valueId" column="valueId" javaType="Integer"/>
+        <result property="valueName" column="valueName" javaType="String"/>
+        <result property="createdBy" column="createdBy" javaType="Integer"/>
+        <result property="creationDate" column="creationDate" javaType="Date"/>
+        <result property="modifyBy" column="modifyBy" javaType="Integer"/>
+        <result property="modifyDate" column="modifyDate" javaType="Date"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="DataDictionary">
+        insert data_dictionary (typeCode,typeName,valueId,valueName,createdBy,creationDate)
+          values (#{typeCode},#{typeName},#{valueId},#{valueName},#{createdBy},#{creationDate})
+    </insert>
+
+    <delete id="delete" parameterType="Integer">
+        delete data_dictionary where id = #{id}
+    </delete>
+
+    <update id="update" parameterType="DataDictionary">
+        update data_dictionary
+        <set>
+            <if test="typeCode != null">typeCode=#{typeCode},</if>
+            <if test="typeName != null">typeName=#{typeName},</if>
+            <if test="valueId != null">valueId=#{valueId},</if>
+            <if test="valueName != null">valueName=#{valueName},</if>
+            <if test="modifyBy != null">modifyBy=#{modifyBy},</if>
+            <if test="modifyDate != null">modifyDate=#{modifyDate},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="selectById" parameterType="Integer" resultMap="dataDictionaryResultMap">
+        select * from data_dictionary where id=#{id}
+    </select>
+
+    <select id="selectByTypeCodeAndValueId" resultMap="dataDictionaryResultMap">
+        select * from data_dictionary where typeCode=#{typeCode} and valueId=#{valueId}
+    </select>
+
+    <select id="selectByTypeCode" parameterType="String" resultMap="dataDictionaryResultMap">
+        select * from data_dictionary where typeCode=#{typeCode}
+    </select>
+</mapper>
